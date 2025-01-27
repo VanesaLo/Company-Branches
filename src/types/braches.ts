@@ -1,4 +1,4 @@
-export default interface IBranches {
+export default interface IBranche {
   id: number;
   nombre: string;
   descripcion: string;

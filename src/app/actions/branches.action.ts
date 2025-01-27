@@ -4,7 +4,6 @@ import { fetchWithAuth, getAppId } from "./utils";
 import IBranches from "app/types/braches";
 
 
-
 export async function getListBranches() : Promise<IBranches[] | null> {
   const appId = await getAppId();
 

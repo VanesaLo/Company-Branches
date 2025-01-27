@@ -1,13 +1,18 @@
+import { Suspense } from "react"
+import ListCardSkeleton from "app/components/list-card-skeleton"
+import ListBranches from "app/components/branches/list-branches";
 
 export default function Home() {
   return (
     <div className="flex flex-col gap-4">
-      {Array.from({ length: 24 }).map((_, index) => (
-        <div
-          key={index}
-          className="aspect-video h-12 w-full rounded-lg bg-muted/50"
-        />
-      ))}
+      <Suspense fallback={<ListCardSkeleton />}>
+      <ListBranches />
+      </Suspense>
     </div>
   );
 }
+
+
+
+
+
