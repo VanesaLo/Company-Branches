@@ -1,8 +1,67 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+Proyecto: Presentación de Sucursales
 
-First, run the development server:
+Descripción
+
+Esta es una página web diseñada para una empresa que desea presentar sus sucursales al público. La aplicación cuenta con:
+
+**Vista pública:** Donde se muestra información de las sucursales disponibles.
+
+**Panel de administración:** Permite realizar operaciones CRUD (crear, leer, actualizar, eliminar) para gestionar las sucursales.
+
+Además, las sucursales incluyen información detallada como país, departamento y ciudad, con opciones de búsqueda optimizada en los selectores para facilitar la navegación.
+
+## Tecnologías utilizadas
+
+- Next.js 15 [Next.js](https://nextjs.org)
+- React.js 19
+- Shadcn
+
+### Requisitos previo
+ 1. Node.js [Descargar](https://nodejs.org/es)
+ 2. Git (para clonar el repositorio)
+
+## Instrucciones de instalación y ejecución
+
+1. Clonar el repositorio
+
+```bash
+
+git clone <URL_DEL_REPOSITORIO>
+cd <NOMBRE_DEL_REPOSITORIO>
+
+```
+
+2. Instalar dependencias
+Ejecuta el siguiente comando para instalar todas las dependencias necesarias:
+
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+```
+
+3. Configurar variables de entorno
+
+Crea un archivo .env.local en la raíz del proyecto y configura las siguientes variables:
+
+```bash
+
+NODE_ENV="development"
+BASE_URL="http://localhost:3000"
+SERVER_PRUEBATEST_URL=""
+SERVER_URL_STORAGE=""
+AUTH_SECRET=""
+AUTH_URL=""
+
+```
+
+4. Iniciar el servidor de desarrollo
+
+Para iniciar la aplicación en modo de desarrollo, ejecuta:
 
 ```bash
 npm run dev
@@ -10,27 +69,4 @@ npm run dev
 yarn dev
 # or
 pnpm dev
-# or
-bun dev
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
