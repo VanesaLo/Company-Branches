@@ -14,3 +14,9 @@ export const branchSchema = z.object({
   longitud: z.string().min(1, "Longitude is required"),
 });
 export type BranchSchema = z.infer<typeof branchSchema>
+
+export const branchUpdateSchema = branchSchema.extend({
+  id: z.number(),
+  imagen: z.string().optional(),
+});
+export type BranchUpdateSchema = z.infer<typeof branchUpdateSchema>

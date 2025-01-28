@@ -3,7 +3,7 @@
 import { validatedActionWithUser } from "app/lib/auth/middleware";
 import { fetchWithAuth, getAppId } from "./utils";
 import { IBranch } from "app/types/branch";
-import { branchSchema } from "../schemas/branches.schema";
+import { branchSchema, branchUpdateSchema } from "../schemas/branches.schema";
 
 
 export async function getListBranches() : Promise<IBranch[] | null> {
@@ -27,6 +27,24 @@ export const createBranch = validatedActionWithUser(branchSchema, async (data) =
     body: JSON.stringify(data),
   });
   if (!response.ok) return { error: "Failed to create branch" };
+
+  const { message } = await response.json();
+  return { success: message };
+});
+
+export const updateBranch = validatedActionWithUser(branchUpdateSchema, async (data) => {
+  const response = await fetchWithAuth(`${process.env.SERVER_PRUEBATEST_URL}/sucursal/${data.id}`, {
+    method: "PUT",
+    cache: "no-cache",
+    body: JSON.stringify(data),
+  });
+  if (!response.ok){
+    if (response.status === 422) {
+      const { message } = await response.json();
+      return { error: message };
+    }
+    return { error: "Failed to create branch" }
+  };
 
   const { message } = await response.json();
   return { success: message };

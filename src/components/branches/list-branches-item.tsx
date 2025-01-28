@@ -32,6 +32,7 @@ import { useCallback, useState } from "react";
 import classNames from "classnames";
 import { useSession } from "next-auth/react";
 import { deleteBranch } from "app/app/actions/branches.action";
+import DialogFormBranch from "./components/dialog-form-branch";
 
 type ListBranchesItemProps = {
   branch: IBranch;
@@ -49,9 +50,12 @@ export default function ListBranchesItem({
   // -- States
   const [expanded, toggleExpanded] = useToggle(false);
   const [isDialogOpen, setDialogOpen] = useState(false);
+  const [openUpdateBranch, setOpenUpdateBranch] = useState(false);
 
   // -- Handlers
-  const handleEdit = useCallback(() => {}, []);
+  const handleEdit = useCallback(() => {
+    setOpenUpdateBranch(true)
+  }, []);
 
   const handleDelete = useCallback(
     async (id: number) => {
@@ -89,10 +93,13 @@ export default function ListBranchesItem({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
+                  {/* Edit */}
                   <DropdownMenuItem onClick={handleEdit}>
                     <Pencil className="mr-2 h-4 w-4" />
                     <span>Edit</span>
                   </DropdownMenuItem>
+
+                  {/* Delete */}
                   <DropdownMenuItem onClick={() => setDialogOpen(true)}>
                     <Trash2 className="mr-2 h-4 w-4" />
                     <span>Delete</span>
@@ -140,6 +147,17 @@ export default function ListBranchesItem({
           </div>
         </CardContent>
       </Card>
+
+      {/* Dialog Update Branch */}
+      <DialogFormBranch
+        open={openUpdateBranch}
+        setOpen={setOpenUpdateBranch}
+        title="Update Branch"
+        description="Update the branch information"
+        branch={branch}
+      />
+
+      {/* Dialog Remove Branch */}
       <AlertDialog open={isDialogOpen} onOpenChange={setDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>

@@ -5,18 +5,10 @@ import { useDebouncedCallback } from "use-debounce";
 import { Input } from "app/components/ui/input";
 import { Button } from "app/components/ui/button";
 import { PlusCircle } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "app/components/ui/dialog";
-import BranchForm from "./branch-form";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { ViewToggle } from "./toolbar-toggle-view";
+import DialogFormBranch from "./components/dialog-form-branch";
 
 type ListBranchesToolbarProps = {
   handleViewChange: (newView: "list" | "map") => void;
@@ -32,7 +24,7 @@ export default function ListBranchesToolbar({
   const { data: session } = useSession();
 
   // -- States
-  const [open, setOpen] = useState<boolean>(false);
+  const [openCreateBranch, setOpenCreateBranch] = useState<boolean>(false);
 
   // -- Handlers
   const handleSearch = useDebouncedCallback((term: string) => {
@@ -41,10 +33,6 @@ export default function ListBranchesToolbar({
     else params.delete("query");
     router.replace(`${pathname}?${params.toString()}`);
   }, 300);
-
-  const handleCloseDialog = useCallback(() => {
-    setOpen(false);
-  }, []);
 
   // -- Render
   return (
@@ -64,27 +52,18 @@ export default function ListBranchesToolbar({
 
         {/* New branch */}
         {session ? (
-          <div className="ml-auto mr-4">
-            <Dialog open={open} onOpenChange={setOpen} modal>
-              <DialogTrigger asChild>
-                <Button>
-                  <PlusCircle />
-                  Add Branch
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-2xl">
-                <DialogHeader>
-                  <DialogTitle>New Branch</DialogTitle>
-                  <DialogDescription>
-                    Create a new branch to start selling your products
-                  </DialogDescription>
-                </DialogHeader>
-
-                {/* Form */}
-                <BranchForm handleCloseDialog={handleCloseDialog} />
-              </DialogContent>
-            </Dialog>
-          </div>
+          <>
+            <Button onClick={() => setOpenCreateBranch(true)}>
+              <PlusCircle />
+              Add Branch
+            </Button>
+            <DialogFormBranch
+              open={openCreateBranch}
+              setOpen={setOpenCreateBranch}
+              title="New Branch"
+              description="Create a new branch to start selling your products"
+            />
+          </>
         ) : null}
       </div>
     </div>
