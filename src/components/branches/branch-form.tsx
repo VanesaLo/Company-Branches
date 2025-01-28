@@ -318,7 +318,7 @@ export default function BranchForm() {
         <FormField
           control={form.control}
           name="imagen"
-          render={({ field }) => (
+          render={() => (
             <FormItem>
               <FormLabel>Image</FormLabel>
               <FormControl>

@@ -15,7 +15,6 @@ import {
 } from "app/components/ui/dialog";
 import BranchForm from "./branch-form";
 import { ViewToggle } from "./toolbar-toggle-view";
-import { useState } from "react";
 
 
 type ListBranchesToolbarProps = {

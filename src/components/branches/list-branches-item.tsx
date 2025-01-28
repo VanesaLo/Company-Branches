@@ -26,7 +26,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "app/components/ui/alert-dialog";
 import { MapPin, MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { useCallback, useState } from "react";
@@ -58,7 +57,7 @@ export default function ListBranchesItem({
     const branch = await deleteBranch(id);
     if (branch) router.refresh();
     setDialogOpen(false);
-  }, []);
+  }, [router]);
 
   // -- Render
   return (

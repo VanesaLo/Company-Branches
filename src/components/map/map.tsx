@@ -29,7 +29,7 @@ export default function MapView({ branches }: Props) {
           key={branch.id}
           position={[Number(branch.latitud), Number(branch.longitud)]}
           icon={L.icon({
-            iconUrl: markerIconPng as any,
+            iconUrl: markerIconPng,
             iconSize: [25, 41],
             iconAnchor: [12, 41],
             popupAnchor: [1, -34],

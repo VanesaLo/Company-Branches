@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Toggle } from "app/components/ui/toggle";
 import { List, Map } from "lucide-react";
 import { Button } from "../ui/button";
 
