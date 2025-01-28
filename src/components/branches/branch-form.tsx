@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { startTransition, useActionState, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,7 +15,7 @@ import {
 } from "app/components/ui/form";
 import { Input } from "app/components/ui/input";
 import { Textarea } from "app/components/ui/textarea";
-import { CloudUpload, Paperclip } from "lucide-react";
+import { CloudUpload, Loader2, Paperclip } from "lucide-react";
 import {
   FileInput,
   FileUploader,
@@ -34,6 +34,10 @@ import { FormCombobox } from "app/components/branches/components/form-combobox";
 import { IDepartment } from "app/types/department";
 import { ICity } from "app/types/city";
 import { DropzoneOptions } from "react-dropzone";
+import FormMapDraggable from "./components/form-map-draggable";
+import { createBranch } from "app/app/actions/branches.action";
+import { ActionState } from "app/lib/auth/middleware";
+import { useRouter } from "next/navigation";
 
 function convertObjectToArray<T extends ICountry | IDepartment | ICity>(
   object: Record<string, T>
@@ -41,7 +45,14 @@ function convertObjectToArray<T extends ICountry | IDepartment | ICity>(
   return Object.values(object);
 }
 
-export default function BranchForm() {
+type BranchFormProps = {
+  handleCloseDialog: () => void;
+};
+
+export default function BranchForm({ handleCloseDialog }: BranchFormProps) {
+  // -- Hooks
+  const router = useRouter();
+
   // -- States
   const [countries, setCountries] = useState<ICountry[]>([]);
   const [departments, setDepartments] = useState<IDepartment[]>([]);
@@ -50,6 +61,12 @@ export default function BranchForm() {
   const [isLoadingCountries, setIsLoadingCountries] = useState(false);
   const [isLoadingDepartments, setIsLoadingDepartments] = useState(false);
   const [isLoadingCities, setIsLoadingCities] = useState(false);
+
+  // -- States Save
+  const [formState, formCreateBranchAction, isPending] = useActionState<ActionState, FormData>(
+    createBranch,
+    { error: "", success: "" }
+  );
 
   // -- Events
   async function getCountries() {
@@ -94,10 +111,18 @@ export default function BranchForm() {
     }
   }
 
+  function saveSuccess() {
+    toast.success("Branch created successfully");
+    handleCloseDialog();
+    router.refresh();
+  }
+
   // -- Form
   const form = useForm<BranchSchema>({
     resolver: zodResolver(branchSchema),
   });
+  const fieldLatitud = form.watch("latitud");
+  const fieldLongitud = form.watch("longitud");
 
   // -- Dropzone
   const dropZoneConfig: DropzoneOptions = {
@@ -107,12 +132,25 @@ export default function BranchForm() {
   };
 
   // -- Handlers
+  const handleCityChange = (cityId: string) => {
+    const city = cities.find((city) => city.id === Number(cityId));
+    if (!city) return;
+
+    form.setValue("latitud", city.latitude);
+    form.setValue("longitud", city.longitude);
+  };
+
+  const handleLatLng = (latLng: { lat: number; lng: number }) => {
+    form.setValue("latitud", latLng.lat.toString());
+    form.setValue("longitud", latLng.lng.toString());
+  };
+
   const handleFiles = (files: File[] | null) => {
     setFiles(files);
     if (!files || !files.length) {
       form.setValue("imagen", "");
       return;
-    };
+    }
 
     // Base64 encoding
     const file = files[0];
@@ -126,14 +164,15 @@ export default function BranchForm() {
     };
   };
 
-  function onSubmit(values: BranchSchema) {
+  async function onSubmit(values: BranchSchema) {
     try {
-      console.log(values);
-      toast(
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(values, null, 2)}</code>
-        </pre>
-      );
+      startTransition(() => {
+        const formData = new FormData();
+        Object.entries(values).forEach(([key, value]) =>
+          formData.append(key, value)
+        );
+        formCreateBranchAction(formData);
+      });
     } catch (error) {
       console.error("Form submission error", error);
       toast.error("Failed to submit the form. Please try again.");
@@ -145,11 +184,18 @@ export default function BranchForm() {
     getCountries();
   }, []);
 
+  useEffect(() => {
+    if (formState.success){
+      saveSuccess();
+    }
+  }, [formState.success]);
+
   // -- Render
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div className="grid grid-cols-12 gap-4">
+          {/* Name */}
           <div className="col-span-6">
             <FormField
               control={form.control}
@@ -166,6 +212,7 @@ export default function BranchForm() {
             />
           </div>
 
+          {/* Email */}
           <div className="col-span-6">
             <FormField
               control={form.control}
@@ -183,6 +230,7 @@ export default function BranchForm() {
           </div>
         </div>
 
+        {/* Description */}
         <FormField
           control={form.control}
           name="descripcion"
@@ -198,6 +246,7 @@ export default function BranchForm() {
         />
 
         <div className="grid grid-cols-12 gap-4">
+          {/* Country */}
           <div className="col-span-4">
             <FormField
               control={form.control}
@@ -213,6 +262,8 @@ export default function BranchForm() {
                         field.onChange(value);
                         form.setValue("departamento", "");
                         form.setValue("city_id", "");
+                        form.setValue("latitud", "");
+                        form.setValue("longitud", "");
                         getDepartments(value);
                       }}
                       placeholder="Select country"
@@ -226,6 +277,7 @@ export default function BranchForm() {
             />
           </div>
 
+          {/* State */}
           <div className="col-span-4">
             <FormField
               control={form.control}
@@ -240,6 +292,8 @@ export default function BranchForm() {
                       onSelect={(value) => {
                         field.onChange(value);
                         form.setValue("city_id", "");
+                        form.setValue("latitud", "");
+                        form.setValue("longitud", "");
                         getCities(value);
                       }}
                       placeholder="Select state"
@@ -254,6 +308,7 @@ export default function BranchForm() {
             />
           </div>
 
+          {/* City */}
           <div className="col-span-4">
             <FormField
               control={form.control}
@@ -267,6 +322,7 @@ export default function BranchForm() {
                       value={field.value}
                       onSelect={(value) => {
                         field.onChange(value);
+                        handleCityChange(value);
                       }}
                       placeholder="Select city"
                       label="City"
@@ -281,7 +337,28 @@ export default function BranchForm() {
           </div>
         </div>
 
+        {/* Map */}
+        {fieldLatitud && fieldLongitud ? (
+          <div className="flex flex-col">
+            <FormMapDraggable
+              draggable={true}
+              latitude={fieldLatitud}
+              longitude={fieldLongitud}
+              callbackLatLng={handleLatLng}
+            />
+            <div className="flex justify-between">
+              <p className="text-xs text-muted-foreground">
+                Drag the marker to set the location
+              </p>
+              <p className="text-xs text-muted-foreground">
+                ({fieldLatitud}, {fieldLongitud})
+              </p>
+            </div>
+          </div>
+        ) : null}
+
         <div className="grid grid-cols-12 gap-4">
+          {/* Address */}
           <div className="col-span-6">
             <FormField
               control={form.control}
@@ -299,6 +376,7 @@ export default function BranchForm() {
           </div>
 
           <div className="col-span-6">
+            {/* Phone */}
             <FormField
               control={form.control}
               name="telefono"
@@ -315,10 +393,11 @@ export default function BranchForm() {
           </div>
         </div>
 
+        {/* Image */}
         <FormField
           control={form.control}
           name="imagen"
-          render={({ field }) => (
+          render={({}) => (
             <FormItem>
               <FormLabel>Image</FormLabel>
               <FormControl>
@@ -359,8 +438,23 @@ export default function BranchForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+
+        {formState.error ? (
+          <div className="text-red-500 text-sm">{formState.error}</div>
+        ) : null}
+
+        <Button type="submit" disabled={isPending}>
+          {isPending ? (
+            <>
+              <Loader2 className="animate-spin mr-2 h-4 w-4" />
+              Loading...
+            </>
+          ) : (
+            "Submit"
+          )}
+        </Button>
       </form>
     </Form>
   );
 }
+

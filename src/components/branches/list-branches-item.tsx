@@ -89,7 +89,7 @@ export default function ListBranchesItem({
         </CardTitle>
 
         {/* Description */}
-        <div className="flex flex-col space-y-1.5 items-end">
+        <div className="flex flex-col space-y-1.5">
           <p
             className={classNames("text-sm text-muted-foreground", {
               "line-clamp-3": !expanded,
@@ -97,9 +97,15 @@ export default function ListBranchesItem({
           >
             {branch.descripcion}
           </p>
-          <Button variant="outline" size="sm" onClick={() => toggleExpanded()}>
-            {expanded ? "Read less..." : "Read more..."}
-          </Button>
+          <div className="flex justify-end">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => toggleExpanded()}
+            >
+              {expanded ? "Read less..." : "Read more..."}
+            </Button>
+          </div>
         </div>
 
         {/* Direction */}
