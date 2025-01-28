@@ -1,21 +1,36 @@
-"use server";
+"use client";
 
-import { getListBranches } from "app/app/actions/branches.action";
-import ErrorReload from "../error-reload";
-import { connection } from "next/server";
+import { IBranch } from "app/types/branch";
 import ListBranchesItem from "./list-branches-item";
-import { getImageUrl } from "app/app/actions/images.action";
-import SearchInput from "../search/search";
-import CreateBranch from "../create-branches/create-branch";
-import MapView from "../map/map";
+import ListBranchesToolbar from "./list-branches-toolbar";
 
-export default async function ListBranches() {
-  // -- Nextjs
-  await connection();
+type ListBranchesProps = {
+  branches: IBranch[];
+  baseUrlStorage: string;
+};
+export default function ListBranches({
+  branches,
+  baseUrlStorage,
+}: ListBranchesProps) {
+  return (
+    <div className="flex flex-col space-y-4">
+      {/* Toolbar */}
+      <ListBranchesToolbar />
 
-  // -- API
-  const branches = await getListBranches();
+      {/* List Branches */}
+      <div className="grid gap-4 md:grids-col-2 lg:grid-cols-3">
+        {branches.map((branch) => (
+          <ListBranchesItem
+            key={branch.id}
+            branch={branch}
+            imageUrl={`${baseUrlStorage}/${branch.imagen}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
 
+  /*
   // -- Render
   if (branches) {
     return (
@@ -41,4 +56,5 @@ export default async function ListBranches() {
   } else if (branches === null) {
     return <ErrorReload />;
   }
+  */
 }

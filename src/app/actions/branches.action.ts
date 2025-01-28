@@ -1,10 +1,10 @@
 "use server";
 
 import { fetchWithAuth, getAppId } from "./utils";
-import IBranches from "app/types/braches";
+import { IBranch } from "app/types/branch";
 
 
-export async function getListBranches() : Promise<IBranches[] | null> {
+export async function getListBranches() : Promise<IBranch[] | null> {
   const appId = await getAppId();
 
   const response = await fetchWithAuth(`${process.env.SERVER_PRUEBATEST_URL}/sucursal/${appId}`, {

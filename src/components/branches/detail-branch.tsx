@@ -13,7 +13,7 @@ import {
 } from "app/components/ui/dropdown-menu";
 import { getImageUrl } from "app/app/actions/images.action";
 import { useRouter } from "next/navigation";
-import IBranche from "app/types/braches";
+import IBranche from "app/types/branch";
 
 
 type ListBranchesItemProps = {

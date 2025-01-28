@@ -4,7 +4,7 @@ import L from "leaflet";
 import { useState } from "react";
 // import MarkerClusterGroup from 'react-leaflet-cluster';
 import { Popup, Marker, TileLayer, MapContainer } from "react-leaflet";
-import IBranche from "app/types/braches";
+import IBranche from "app/types/branch";
 
 type Props = {
   branch?: IBranche;

@@ -12,19 +12,16 @@ export default async function ListCompanies() {
   // -- API
   const companies = await getListCompanies();
 
-  // -- Render
-  if(companies){
-    return (
-      <div className="grid md:grids-col-2 md:gap-4 lg:grid-cols-3 lg:gap-4">
-        {companies.map((company) => (
-          <ListCompaniesItem key={company.id_app} company={company} />
-        ))}
-      </div>
-    )
-  } else if (companies === null) {
-    return (
-      <ErrorReload />
-    )
-  }
+  // -- Render Error
+  if (companies === null)
+    return <ErrorReload />
 
+  // -- Render
+  return (
+    <div className="grid md:grids-col-2 md:gap-4 lg:grid-cols-3 lg:gap-4">
+      {companies.map((company) => (
+        <ListCompaniesItem key={company.id_app} company={company} />
+      ))}
+    </div>
+  )
 }

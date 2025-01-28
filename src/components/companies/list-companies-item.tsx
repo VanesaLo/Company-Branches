@@ -22,7 +22,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
+} from "app/components/ui/dropdown-menu";
 import Link from "next/link";
 import { useMemo } from "react";
 
