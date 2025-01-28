@@ -1,21 +1,19 @@
 "use client";
 
 import L from "leaflet";
-import { useState } from "react";
-// import MarkerClusterGroup from 'react-leaflet-cluster';
 import { Popup, Marker, TileLayer, MapContainer } from "react-leaflet";
-import { IBranch }from "app/types/branch";
-import 'leaflet/dist/leaflet.css';
+import { IBranch } from "app/types/branch";
+import "leaflet/dist/leaflet.css";
+import markerIconPng from "leaflet/dist/images/marker-icon.png";
 
 type Props = {
-  branch?: IBranch;
+  branches: IBranch[];
 };
-export default function MapView({ branch }: Props) {
-
+export default function MapView({ branches }: Props) {
   return (
     <MapContainer
       center={[4.65689177649476, -74.09243489455264]}
-      zoom={13}
+      zoom={7}
       style={{
         height: "100%",
         width: "100%",
@@ -25,22 +23,27 @@ export default function MapView({ branch }: Props) {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {branch && (
+
+      {branches.map((branch) => (
         <Marker
+          key={branch.id}
           position={[Number(branch.latitud), Number(branch.longitud)]}
-          icon={
-            new L.DivIcon({
-              className: "marker-text",
-              iconSize: [70, 70],
-              iconAnchor: [25, 25],
-              popupAnchor: [0, -25],
-            })
-          }
+          icon={L.icon({
+            iconUrl: markerIconPng as any,
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41],
+          })}
         >
-          {/* <Popup autoPan={false} closeButton={false}>
-              </Popup> */}
+          <Popup autoPan={false} closeButton={false}>
+            <div className="flex flex-col space-y-2">
+              <h1 className="text-lg font-bold">{branch.nombre}</h1>
+              <p className="text-sm">{branch.direccion}</p>
+            </div>
+          </Popup>
         </Marker>
-      )}
+      ))}
     </MapContainer>
   );
 }

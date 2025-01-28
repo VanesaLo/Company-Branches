@@ -4,8 +4,9 @@ import { IBranch } from "app/types/branch";
 import ListBranchesItem from "./list-branches-item";
 import ListBranchesToolbar from "./list-branches-toolbar";
 import { ViewToggle } from "./toolbar-toggle-view";
-import { useState } from "react";
-import MapView from "../map/map";
+import { useMemo, useState } from "react";
+// import MapView from "../map/map";
+import dynamic from "next/dynamic";
 
 type ListBranchesProps = {
   branches: IBranch[];
@@ -21,18 +22,24 @@ export default function ListBranches({
   // -- Handlers
   const handleViewChange = (newView: "list" | "map") => {
     setView(newView);
-    console.log(`View changed to: ${newView}`);
   };
+
+
+  const MapComponent = useMemo(
+    () =>
+      dynamic(() => import('../map/map'), {
+        ssr: false,
+        loading: () => <div>...Cargando Mapa</div>,
+      }),
+    []
+  );
+
+
 
   return (
     <div className="flex flex-col space-y-4">
       {/* Toolbar */}
-      <ListBranchesToolbar />
-
-      {/* View Toggle */}
-      <div className="flex justify-end">
-        <ViewToggle onViewChange={handleViewChange} />
-      </div>
+      <ListBranchesToolbar handleViewChange={handleViewChange} />
 
       {view === "list" ? (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -45,8 +52,8 @@ export default function ListBranches({
           ))}
         </div>
       ) : (
-        <div className="h-[300px] mt-8 bg-gray-950 rounded-lg shadow-lg w-full">
-          <MapView />
+        <div className="h-[600px] mt-8 bg-gray-950 rounded-lg shadow-lg w-full">
+          <MapComponent branches={branches}/>
         </div>
       )}
     </div>
