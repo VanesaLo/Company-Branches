@@ -17,7 +17,6 @@ import BranchForm from "./branch-form";
 import { useCallback, useState } from "react";
 import { useSession } from "next-auth/react";
 import { ViewToggle } from "./toolbar-toggle-view";
-import { ScrollArea } from "app/components/ui/scroll-area";
 
 type ListBranchesToolbarProps = {
   handleViewChange: (newView: "list" | "map") => void;

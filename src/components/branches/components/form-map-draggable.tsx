@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import { Marker as LeafletMarker, Map as LeafletMap } from 'leaflet';
 
@@ -26,7 +26,7 @@ export default function FormMapDraggable({
 
   // -- States
   const [isDraggable] = useState(draggable);
-  const [center, setCenter] = useState({
+  const [center] = useState({
     lat: Number(latitude),
     lng: Number(longitude),
   });
