@@ -3,9 +3,7 @@
 import { IBranch } from "app/types/branch";
 import ListBranchesItem from "./list-branches-item";
 import ListBranchesToolbar from "./list-branches-toolbar";
-import { ViewToggle } from "./toolbar-toggle-view";
 import { useMemo, useState } from "react";
-// import MapView from "../map/map";
 import dynamic from "next/dynamic";
 
 type ListBranchesProps = {

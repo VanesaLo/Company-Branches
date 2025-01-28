@@ -16,3 +16,13 @@ export async function getListBranches() : Promise<IBranch[] | null> {
 
   return data;
 }
+
+
+export async function deleteBranch(id: number) {
+  const response = await fetchWithAuth(`${process.env.SERVER_PRUEBATEST_URL}/sucursal/${id}`, {
+    method: "DELETE",
+    cache: "no-cache",
+  });
+
+  return response.ok;
+}
