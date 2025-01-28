@@ -1,10 +1,11 @@
 "use client";
 
-import L from "leaflet";
 import { Popup, Marker, TileLayer, MapContainer } from "react-leaflet";
 import { IBranch } from "app/types/branch";
-import "leaflet/dist/leaflet.css";
-import markerIconPng from "leaflet/dist/images/marker-icon.png";
+
+{/* Markers */}
+import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
+import 'leaflet-defaulticon-compatibility';
 
 type Props = {
   branches: IBranch[];
@@ -28,13 +29,6 @@ export default function MapView({ branches }: Props) {
         <Marker
           key={branch.id}
           position={[Number(branch.latitud), Number(branch.longitud)]}
-          icon={L.icon({
-            iconUrl: markerIconPng,
-            iconSize: [25, 41],
-            iconAnchor: [12, 41],
-            popupAnchor: [1, -34],
-            shadowSize: [41, 41],
-          })}
         >
           <Popup autoPan={false} closeButton={false}>
             <div className="flex flex-col space-y-2">

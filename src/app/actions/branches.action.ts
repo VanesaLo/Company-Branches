@@ -19,14 +19,14 @@ export async function getListBranches() : Promise<IBranch[] | null> {
   return data;
 }
 
-export const createBranch = validatedActionWithUser(branchSchema, async (data, _, session) => {
+export const createBranch = validatedActionWithUser(branchSchema, async (data) => {
 
   const response = await fetchWithAuth(`${process.env.SERVER_PRUEBATEST_URL}/sucursal`, {
     method: "POST",
     cache: "no-cache",
     body: JSON.stringify(data),
   });
-  if (!response.ok) throw new Error('Failed to create branch');
+  if (!response.ok) return { error: "Failed to create branch" };
 
   const { message } = await response.json();
   return { success: message };

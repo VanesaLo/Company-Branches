@@ -34,10 +34,15 @@ import { FormCombobox } from "app/components/branches/components/form-combobox";
 import { IDepartment } from "app/types/department";
 import { ICity } from "app/types/city";
 import { DropzoneOptions } from "react-dropzone";
-import FormMapDraggable from "./components/form-map-draggable";
 import { createBranch } from "app/app/actions/branches.action";
 import { ActionState } from "app/lib/auth/middleware";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
+
+const FormMapDraggable = dynamic(() => import('./components/form-map-draggable'), {
+  ssr: false,
+  loading: () => <div>Loading...</div>,
+});
 
 function convertObjectToArray<T extends ICountry | IDepartment | ICity>(
   object: Record<string, T>
@@ -63,10 +68,10 @@ export default function BranchForm({ handleCloseDialog }: BranchFormProps) {
   const [isLoadingCities, setIsLoadingCities] = useState(false);
 
   // -- States Save
-  const [formState, formCreateBranchAction, isPending] = useActionState<ActionState, FormData>(
-    createBranch,
-    { error: "", success: "" }
-  );
+  const [formState, formCreateBranchAction, isPending] = useActionState<
+    ActionState,
+    FormData
+  >(createBranch, { error: "", success: "" });
 
   // -- Events
   async function getCountries() {
@@ -111,18 +116,18 @@ export default function BranchForm({ handleCloseDialog }: BranchFormProps) {
     }
   }
 
-  function saveSuccess() {
-    toast.success("Branch created successfully");
-    handleCloseDialog();
-    router.refresh();
-  }
-
   // -- Form
   const form = useForm<BranchSchema>({
     resolver: zodResolver(branchSchema),
   });
-  const fieldLatitud = form.watch("latitud");
-  const fieldLongitud = form.watch("longitud");
+  const {
+    handleSubmit,
+    watch,
+    reset,
+    formState: { isSubmitSuccessful },
+  } = form;
+  const fieldLatitud = watch("latitud");
+  const fieldLongitud = watch("longitud");
 
   // -- Dropzone
   const dropZoneConfig: DropzoneOptions = {
@@ -184,16 +189,20 @@ export default function BranchForm({ handleCloseDialog }: BranchFormProps) {
     getCountries();
   }, []);
 
+  // Reset form on success
   useEffect(() => {
-    if (formState.success){
-      saveSuccess();
+    if (isSubmitSuccessful && formState.success) {
+      reset();
+      toast.success("Branch created successfully");
+      handleCloseDialog();
+      router.refresh();
     }
-  }, [formState.success]);
+  }, [router, reset, isSubmitSuccessful, formState.success, handleCloseDialog]);
 
   // -- Render
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="grid grid-cols-12 gap-4">
           {/* Name */}
           <div className="col-span-6">
@@ -457,4 +466,3 @@ export default function BranchForm({ handleCloseDialog }: BranchFormProps) {
     </Form>
   );
 }
-

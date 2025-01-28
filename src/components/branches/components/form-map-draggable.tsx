@@ -1,9 +1,12 @@
 "use client";
 
-import { icon } from "leaflet";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
-import markerIconPng from "leaflet/dist/images/marker-icon.png";
+import { Marker as LeafletMarker } from 'leaflet';
+
+{/* Markers */}
+import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
+import 'leaflet-defaulticon-compatibility';
 
 type FormMapDraggableProps = {
   draggable: boolean;
@@ -18,7 +21,7 @@ export default function FormMapDraggable({
   callbackLatLng,
 }: FormMapDraggableProps) {
   // -- Refs
-  const markerRef = useRef(null);
+  const markerRef = useRef<LeafletMarker | null>(null);
 
   // -- States
   const [center, setCenter] = useState({
@@ -28,7 +31,7 @@ export default function FormMapDraggable({
   const [position, setPosition] = useState(center);
 
   // -- Events
-  const detectPosition = () => {
+  const detectPosition = useCallback(() => {
     if (
       latitude !== position.lat.toString() &&
       longitude !== position.lng.toString()
@@ -36,7 +39,7 @@ export default function FormMapDraggable({
       setPosition({ lat: Number(latitude), lng: Number(longitude) });
       setCenter({ lat: Number(latitude), lng: Number(longitude) });
     }
-  };
+  }, [latitude, longitude, position]);
 
   // -- Handlers
   const eventHandlers = useMemo(
@@ -50,13 +53,14 @@ export default function FormMapDraggable({
         }
       },
     }),
-    []
+    [callbackLatLng]
   );
 
-  // -- Effects latLng
+  // -- Effects
+  // Detect position on mount
   useEffect(() => {
     detectPosition();
-  }, [latitude, longitude]);
+  }, [detectPosition]);
 
   // -- Render
   return (
@@ -79,13 +83,6 @@ export default function FormMapDraggable({
         eventHandlers={eventHandlers}
         position={position}
         ref={markerRef}
-        icon={icon({
-          iconUrl: markerIconPng as any,
-          iconSize: [25, 41],
-          iconAnchor: [12, 41],
-          popupAnchor: [1, -34],
-          shadowSize: [41, 41],
-        })}
       >
         <Popup minWidth={90}>
           <span>{draggable ? "Marker is draggable" : ""}</span>

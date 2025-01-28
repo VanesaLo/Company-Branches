@@ -14,7 +14,7 @@ import {
   DialogTrigger,
 } from "app/components/ui/dialog";
 import BranchForm from "./branch-form";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useSession } from "next-auth/react";
 import { ViewToggle } from "./toolbar-toggle-view";
 
@@ -42,9 +42,9 @@ export default function ListBranchesToolbar({
     router.replace(`${pathname}?${params.toString()}`);
   }, 300);
 
-  const handleCloseDialog = () => {
+  const handleCloseDialog = useCallback(() => {
     setOpen(false);
-  };
+  }, []);
 
   // -- Render
   return (
