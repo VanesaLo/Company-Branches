@@ -4,10 +4,11 @@ import L from "leaflet";
 import { useState } from "react";
 // import MarkerClusterGroup from 'react-leaflet-cluster';
 import { Popup, Marker, TileLayer, MapContainer } from "react-leaflet";
-import IBranche from "app/types/branch";
+import { IBranch }from "app/types/branch";
+import 'leaflet/dist/leaflet.css';
 
 type Props = {
-  branch?: IBranche;
+  branch?: IBranch;
 };
 export default function MapView({ branch }: Props) {
 

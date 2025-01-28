@@ -3,6 +3,9 @@
 import { IBranch } from "app/types/branch";
 import ListBranchesItem from "./list-branches-item";
 import ListBranchesToolbar from "./list-branches-toolbar";
+import { ViewToggle } from "./toolbar-toggle-view";
+import { useState } from "react";
+import MapView from "../map/map";
 
 type ListBranchesProps = {
   branches: IBranch[];
@@ -12,49 +15,40 @@ export default function ListBranches({
   branches,
   baseUrlStorage,
 }: ListBranchesProps) {
+  // -- States
+  const [view, setView] = useState<"list" | "map">("list");
+
+  // -- Handlers
+  const handleViewChange = (newView: "list" | "map") => {
+    setView(newView);
+    console.log(`View changed to: ${newView}`);
+  };
+
   return (
     <div className="flex flex-col space-y-4">
       {/* Toolbar */}
       <ListBranchesToolbar />
 
-      {/* List Branches */}
-      <div className="grid gap-4 md:grids-col-2 lg:grid-cols-3">
-        {branches.map((branch) => (
-          <ListBranchesItem
-            key={branch.id}
-            branch={branch}
-            imageUrl={`${baseUrlStorage}/${branch.imagen}`}
-          />
-        ))}
+      {/* View Toggle */}
+      <div className="flex justify-end">
+        <ViewToggle onViewChange={handleViewChange} />
       </div>
-    </div>
-  );
 
-  /*
-  // -- Render
-  if (branches) {
-    return (
-      <>
-        <div className="flex justify-between items-center">
-          <SearchInput />
-          <CreateBranch />
-        </div>
-        <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+      {view === "list" ? (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {branches.map((branch) => (
             <ListBranchesItem
               key={branch.id}
               branch={branch}
-              image={getImageUrl(branch.imagen)}
+              imageUrl={`${baseUrlStorage}/${branch.imagen}`}
             />
           ))}
         </div>
+      ) : (
         <div className="h-[300px] mt-8 bg-gray-950 rounded-lg shadow-lg w-full">
           <MapView />
         </div>
-      </>
-    );
-  } else if (branches === null) {
-    return <ErrorReload />;
-  }
-  */
+      )}
+    </div>
+  );
 }
