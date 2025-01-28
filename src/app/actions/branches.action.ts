@@ -31,3 +31,12 @@ export const createBranch = validatedActionWithUser(branchSchema, async (data, _
   const { message } = await response.json();
   return { success: message };
 });
+
+export async function deleteBranch(id: number) {
+  const response = await fetchWithAuth(`${process.env.SERVER_PRUEBATEST_URL}/sucursal/${id}`, {
+    method: "DELETE",
+    cache: "no-cache",
+  });
+
+  return response.ok;
+}

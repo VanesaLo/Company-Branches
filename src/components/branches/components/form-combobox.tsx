@@ -1,4 +1,3 @@
-import * as React from "react"
 import { Check, ChevronsUpDown } from "lucide-react"
 import { cn } from "app/lib/utils"
 import { Button } from "app/components/ui/button"
@@ -8,6 +7,7 @@ import { Spinner } from "app/components/ui/spinner"
 import { ICountry } from "app/types/country"
 import { IDepartment } from "app/types/department"
 import { ICity } from "app/types/city"
+import { useState } from "react"
 
 interface ComboboxProps {
   options: ICountry[] | IDepartment[] | ICity[]
@@ -28,7 +28,7 @@ export function FormCombobox({
   disabled = false,
   isLoading = false,
 }: ComboboxProps) {
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = useState(false)
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

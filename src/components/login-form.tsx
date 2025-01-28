@@ -26,10 +26,6 @@ export function LoginForm({
   const handleForgotPassword = () => {
     toast("TODO: Forgot password");
   };
-  const handleBtnLoginWith = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, name: string) => {
-    e.preventDefault();
-    toast(`TODO: Login with ${name}`);
-  }
 
   // -- Render
   return (

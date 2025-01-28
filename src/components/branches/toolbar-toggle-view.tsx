@@ -1,32 +1,39 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Toggle } from "app/components/ui/toggle"
-import { List, Map } from "lucide-react"
+import { useState } from "react";
+import { List, Map } from "lucide-react";
+import { Button } from "../ui/button";
 
 interface ViewToggleProps {
-  onViewChange: (view: "list" | "map") => void
+  onViewChange: (view: "list" | "map") => void;
 }
 
 export function ViewToggle({ onViewChange }: ViewToggleProps) {
-  const [view, setView] = useState<"list" | "map">("list")
+  const [view, setView] = useState<"list" | "map">("list");
 
-  const handleToggle = () => {
-    const newView = view === "list" ? "map" : "list"
-    setView(newView)
-    onViewChange(newView)
-  }
+  const handleToggle = (newView: "list" | "map") => {
+    setView(newView);
+    onViewChange(newView);
+  };
 
   return (
-    <Toggle
-      aria-label="Toggle view"
-      pressed={view === "map"}
-      onPressedChange={handleToggle}
-      className="fixed top-4 right-4 z-10"
-    >
-      {view === "list" ? <Map className="h-4 w-4" /> : <List className="h-4 w-4" />}
-      <span className="sr-only">{view === "list" ? "Switch to map view" : "Switch to list view"}</span>
-    </Toggle>
-  )
+    <div className="flex space-x-2 ">
+      <Button
+        variant={view === "list" ? "outline" : "ghost"}
+        onClick={() => handleToggle("list")}
+        aria-label="View as list"
+      >
+        <List className="h-4 w-4 mr-2" />
+        Lista
+      </Button>
+      <Button
+        variant={view === "map" ? "outline" : "ghost"}
+        onClick={() => handleToggle("map")}
+        aria-label="View as map"
+      >
+        <Map className="h-4 w-4 mr-2" />
+        Mapa
+      </Button>
+    </div>
+  );
 }
-

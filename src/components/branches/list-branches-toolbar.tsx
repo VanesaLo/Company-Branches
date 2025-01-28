@@ -16,8 +16,15 @@ import {
 import BranchForm from "./branch-form";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
+import { ViewToggle } from "./toolbar-toggle-view";
 
-export default function ListBranchesToolbar() {
+type ListBranchesToolbarProps = {
+  handleViewChange: (newView: "list" | "map") => void;
+};
+
+export default function ListBranchesToolbar({
+  handleViewChange,
+}: ListBranchesToolbarProps) {
   // -- Hooks
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -41,40 +48,45 @@ export default function ListBranchesToolbar() {
 
   // -- Render
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between gap-4 ">
       <div className="flex flex-1 items-center space-x-2">
         <Input
           placeholder="Filter by name or description"
           onChange={(e) => handleSearch(e.target.value)}
           defaultValue={searchParams.get("query")?.toString()}
-          className="h-8 w-[150px] lg:w-[250px]"
+          className="h-8 w-[150px] lg:w-[350px]"
         />
       </div>
 
-      {/* New branch */}
-      {session ? (
-        <div className="ml-auto mr-4">
-          <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <PlusCircle />
-                Add Branch
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[750px]">
-              <DialogHeader>
-                <DialogTitle>New Branch</DialogTitle>
-                <DialogDescription>
-                  Create a new branch to start selling your products
-                </DialogDescription>
-              </DialogHeader>
+      <div className="flex items-center space-x-2">
+        {/* View Toggle */}
+        <ViewToggle onViewChange={handleViewChange} />
 
-              {/* Form */}
-              <BranchForm handleCloseDialog={handleCloseDialog} />
-            </DialogContent>
-          </Dialog>
-        </div>
-      ) : null}
+        {/* New branch */}
+        {session ? (
+          <div className="ml-auto mr-4">
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <PlusCircle />
+                  Add Branch
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[750px]">
+                <DialogHeader>
+                  <DialogTitle>New Branch</DialogTitle>
+                  <DialogDescription>
+                    Create a new branch to start selling your products
+                  </DialogDescription>
+                </DialogHeader>
+
+                {/* Form */}
+                <BranchForm handleCloseDialog={handleCloseDialog} />
+              </DialogContent>
+            </Dialog>
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }

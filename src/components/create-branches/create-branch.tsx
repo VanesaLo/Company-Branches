@@ -6,7 +6,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -21,9 +20,8 @@ import {
   FormMessage,
 } from "app/components/ui/form";
 import { Input } from "app/components/ui/input";
-import { Label } from "app/components/ui/label";
 import { Textarea } from "app/components/ui/textarea";
-import { Check, ChevronsUpDown, CloudUpload, Paperclip } from "lucide-react";
+import { Check, ChevronsUpDown, CloudUpload } from "lucide-react";
 import { cn } from "app/lib/utils";
 import {
   Command,
@@ -155,7 +153,7 @@ export default function CreateBranch() {
                 <FormField
                   control={form.control}
                   name="city_id"
-                  render={({ field }) => (
+                  render={({  }) => (
                     <FormItem>
                       <FormLabel>Select Country</FormLabel>
                       <FormControl>
