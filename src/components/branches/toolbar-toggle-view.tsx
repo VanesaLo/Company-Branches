@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { List, Map } from "lucide-react";
-import { Button } from "../ui/button";
+import { Button } from "app/components/ui/button";
 
 interface ViewToggleProps {
   onViewChange: (view: "list" | "map") => void;

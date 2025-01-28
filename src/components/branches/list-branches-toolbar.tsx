@@ -17,6 +17,7 @@ import BranchForm from "./branch-form";
 import { useCallback, useState } from "react";
 import { useSession } from "next-auth/react";
 import { ViewToggle } from "./toolbar-toggle-view";
+import { ScrollArea } from "app/components/ui/scroll-area";
 
 type ListBranchesToolbarProps = {
   handleViewChange: (newView: "list" | "map") => void;
@@ -65,14 +66,14 @@ export default function ListBranchesToolbar({
         {/* New branch */}
         {session ? (
           <div className="ml-auto mr-4">
-            <Dialog open={open} onOpenChange={setOpen}>
+            <Dialog open={open} onOpenChange={setOpen} modal>
               <DialogTrigger asChild>
                 <Button>
                   <PlusCircle />
                   Add Branch
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[750px]">
+              <DialogContent className="sm:max-w-2xl">
                 <DialogHeader>
                   <DialogTitle>New Branch</DialogTitle>
                   <DialogDescription>

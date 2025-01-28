@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { use, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
-import { Marker as LeafletMarker } from 'leaflet';
+import { Marker as LeafletMarker, Map as LeafletMap } from 'leaflet';
 
 {/* Markers */}
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
@@ -22,24 +22,15 @@ export default function FormMapDraggable({
 }: FormMapDraggableProps) {
   // -- Refs
   const markerRef = useRef<LeafletMarker | null>(null);
+  const mapRef = useRef<LeafletMap | null>(null);
 
   // -- States
+  const [isDraggable] = useState(draggable);
   const [center, setCenter] = useState({
     lat: Number(latitude),
     lng: Number(longitude),
   });
-  const [position, setPosition] = useState(center);
-
-  // -- Events
-  const detectPosition = useCallback(() => {
-    if (
-      latitude !== position.lat.toString() &&
-      longitude !== position.lng.toString()
-    ) {
-      setPosition({ lat: Number(latitude), lng: Number(longitude) });
-      setCenter({ lat: Number(latitude), lng: Number(longitude) });
-    }
-  }, [latitude, longitude, position]);
+  const position = useMemo(() => ({ lat: Number(latitude), lng: Number(longitude) }), [latitude, longitude]);
 
   // -- Handlers
   const eventHandlers = useMemo(
@@ -48,7 +39,7 @@ export default function FormMapDraggable({
         const marker = markerRef.current;
         if (marker != null) {
           const latLng = marker.getLatLng();
-          setPosition(latLng);
+          // setPosition(latLng);
           callbackLatLng(latLng);
         }
       },
@@ -57,10 +48,10 @@ export default function FormMapDraggable({
   );
 
   // -- Effects
-  // Detect position on mount
   useEffect(() => {
-    detectPosition();
-  }, [detectPosition]);
+    // Move map to position
+    mapRef.current?.panTo(position);
+  }, [position]);
 
   // -- Render
   return (
@@ -72,6 +63,7 @@ export default function FormMapDraggable({
         height: "200px",
         width: "100%",
       }}
+      ref={mapRef}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -79,7 +71,7 @@ export default function FormMapDraggable({
       />
 
       <Marker
-        draggable={draggable}
+        draggable={isDraggable}
         eventHandlers={eventHandlers}
         position={position}
         ref={markerRef}
