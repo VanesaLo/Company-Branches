@@ -1,107 +1,151 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { toast } from "sonner"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Button } from "app/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "app/components/ui/form"
-import { Input } from "app/components/ui/input"
-import { Textarea } from "app/components/ui/textarea"
-import { CloudUpload, Paperclip } from "lucide-react"
-import { FileInput, FileUploader, FileUploaderContent, FileUploaderItem } from "app/components/ui/file-upload"
-import { type BranchSchema, branchSchema } from "app/app/schemas/branches.schema"
-import type { ICountry } from "app/types/country"
-import { fetchCountries } from "app/app/actions/countries.action"
-import { fetchDepartments } from "app/app/actions/departments.action"
-import { fetchCities } from "app/app/actions/cities.action"
-import { FormCombobox } from "app/components/branches/components/form-combobox"
-import { IDepartment } from "app/types/department"
-import { ICity } from "app/types/city"
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "app/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "app/components/ui/form";
+import { Input } from "app/components/ui/input";
+import { Textarea } from "app/components/ui/textarea";
+import { CloudUpload, Paperclip } from "lucide-react";
+import {
+  FileInput,
+  FileUploader,
+  FileUploaderContent,
+  FileUploaderItem,
+} from "app/components/ui/file-upload";
+import {
+  type BranchSchema,
+  branchSchema,
+} from "app/app/schemas/branches.schema";
+import type { ICountry } from "app/types/country";
+import { fetchCountries } from "app/app/actions/countries.action";
+import { fetchDepartments } from "app/app/actions/departments.action";
+import { fetchCities } from "app/app/actions/cities.action";
+import { FormCombobox } from "app/components/branches/components/form-combobox";
+import { IDepartment } from "app/types/department";
+import { ICity } from "app/types/city";
+import { DropzoneOptions } from "react-dropzone";
 
-function convertObjectToArray<T extends ICountry | IDepartment | ICity>(object: Record<string, T>): T[] {
-  return Object.values(object)
+function convertObjectToArray<T extends ICountry | IDepartment | ICity>(
+  object: Record<string, T>
+): T[] {
+  return Object.values(object);
 }
 
 export default function BranchForm() {
-  const [countries, setCountries] = useState<ICountry[]>([])
-  const [departments, setDepartments] = useState<IDepartment[]>([])
-  const [cities, setCities] = useState<ICity[]>([])
-  const [files, setFiles] = useState<File[] | null>(null)
-  const [isLoadingCountries, setIsLoadingCountries] = useState(false)
-  const [isLoadingDepartments, setIsLoadingDepartments] = useState(false)
-  const [isLoadingCities, setIsLoadingCities] = useState(false)
+  // -- States
+  const [countries, setCountries] = useState<ICountry[]>([]);
+  const [departments, setDepartments] = useState<IDepartment[]>([]);
+  const [cities, setCities] = useState<ICity[]>([]);
+  const [files, setFiles] = useState<File[] | null>(null);
+  const [isLoadingCountries, setIsLoadingCountries] = useState(false);
+  const [isLoadingDepartments, setIsLoadingDepartments] = useState(false);
+  const [isLoadingCities, setIsLoadingCities] = useState(false);
 
-  const form = useForm<BranchSchema>({
-    resolver: zodResolver(branchSchema),
-  })
-
-  const dropZoneConfig = {
-    maxFiles: 5,
-    maxSize: 1024 * 1024 * 4,
-    multiple: true,
-  }
-
+  // -- Events
   async function getCountries() {
-    setIsLoadingCountries(true)
+    setIsLoadingCountries(true);
     try {
-      const fetchedCountries = await fetchCountries()
-      const countries = convertObjectToArray(fetchedCountries)
-      setCountries(countries)
+      const fetchedCountries = await fetchCountries();
+      const countries = convertObjectToArray(fetchedCountries);
+      setCountries(countries);
     } catch (error) {
-      console.error("Error fetching countries:", error)
-      toast.error("Failed to fetch countries. Please try again.")
+      console.error("Error fetching countries:", error);
+      toast.error("Failed to fetch countries. Please try again.");
     } finally {
-      setIsLoadingCountries(false)
+      setIsLoadingCountries(false);
     }
   }
 
   async function getDepartments(countryId: string) {
-    setIsLoadingDepartments(true)
+    setIsLoadingDepartments(true);
     try {
-      const fetchedDepartments = await fetchDepartments(countryId)
-      const departments = convertObjectToArray(fetchedDepartments)
-      setDepartments(departments)
+      const fetchedDepartments = await fetchDepartments(countryId);
+      const departments = convertObjectToArray(fetchedDepartments);
+      setDepartments(departments);
     } catch (error) {
-      console.error("Error fetching departments:", error)
-      toast.error("Failed to fetch departments. Please try again.")
+      console.error("Error fetching departments:", error);
+      toast.error("Failed to fetch departments. Please try again.");
     } finally {
-      setIsLoadingDepartments(false)
+      setIsLoadingDepartments(false);
     }
   }
 
   async function getCities(departmentId: string) {
-    setIsLoadingCities(true)
+    setIsLoadingCities(true);
     try {
-      const fetchedCities = await fetchCities(departmentId)
-      const cities = convertObjectToArray(fetchedCities)
-      setCities(cities)
+      const fetchedCities = await fetchCities(departmentId);
+      const cities = convertObjectToArray(fetchedCities);
+      setCities(cities);
     } catch (error) {
-      console.error("Error fetching cities:", error)
-      toast.error("Failed to fetch cities. Please try again.")
+      console.error("Error fetching cities:", error);
+      toast.error("Failed to fetch cities. Please try again.");
     } finally {
-      setIsLoadingCities(false)
+      setIsLoadingCities(false);
     }
   }
 
-  useEffect(() => {
-    getCountries()
-  }, [])
+  // -- Form
+  const form = useForm<BranchSchema>({
+    resolver: zodResolver(branchSchema),
+  });
+
+  // -- Dropzone
+  const dropZoneConfig: DropzoneOptions = {
+    maxFiles: 1,
+    maxSize: 1024 * 1024 * 4,
+    multiple: true,
+  };
+
+  // -- Handlers
+  const handleFiles = (files: File[] | null) => {
+    setFiles(files);
+    if (!files || !files.length) {
+      form.setValue("imagen", "");
+      return;
+    };
+
+    // Base64 encoding
+    const file = files[0];
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const base64data = event.target?.result;
+      if (base64data) {
+        form.setValue("imagen", base64data.toString());
+      }
+    };
+  };
 
   function onSubmit(values: BranchSchema) {
     try {
-      console.log(values)
+      console.log(values);
       toast(
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
           <code className="text-white">{JSON.stringify(values, null, 2)}</code>
-        </pre>,
-      )
+        </pre>
+      );
     } catch (error) {
-      console.error("Form submission error", error)
-      toast.error("Failed to submit the form. Please try again.")
+      console.error("Form submission error", error);
+      toast.error("Failed to submit the form. Please try again.");
     }
   }
 
+  // -- Effects
+  useEffect(() => {
+    getCountries();
+  }, []);
+
+  // -- Render
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -166,10 +210,10 @@ export default function BranchForm() {
                       options={countries}
                       value={field.value}
                       onSelect={(value) => {
-                        field.onChange(value)
-                        form.setValue("departamento", "")
-                        form.setValue("city_id", "")
-                        getDepartments(value)
+                        field.onChange(value);
+                        form.setValue("departamento", "");
+                        form.setValue("city_id", "");
+                        getDepartments(value);
                       }}
                       placeholder="Select country"
                       label="Country"
@@ -194,9 +238,9 @@ export default function BranchForm() {
                       options={departments}
                       value={field.value}
                       onSelect={(value) => {
-                        field.onChange(value)
-                        form.setValue("city_id", "")
-                        getCities(value)
+                        field.onChange(value);
+                        form.setValue("city_id", "");
+                        getCities(value);
                       }}
                       placeholder="Select state"
                       label="State"
@@ -222,7 +266,7 @@ export default function BranchForm() {
                       options={cities}
                       value={field.value}
                       onSelect={(value) => {
-                        field.onChange(value)
+                        field.onChange(value);
                       }}
                       placeholder="Select city"
                       label="City"
@@ -280,18 +324,23 @@ export default function BranchForm() {
               <FormControl>
                 <FileUploader
                   value={files}
-                  onValueChange={setFiles}
+                  onValueChange={handleFiles}
                   dropzoneOptions={dropZoneConfig}
                   className="relative bg-background rounded-lg p-2"
                 >
-                  <FileInput id="fileInput" className="outline-dashed outline-1 outline-slate-500">
+                  <FileInput
+                    id="fileInput"
+                    className="outline-dashed outline-1 outline-slate-500"
+                  >
                     <div className="flex items-center justify-center flex-col p-8 w-full ">
                       <CloudUpload className="text-gray-500 w-10 h-10" />
                       <p className="mb-1 text-sm text-gray-500 dark:text-gray-400">
                         <span className="font-semibold">Click to upload</span>
                         &nbsp; or drag and drop
                       </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        SVG, PNG, JPG or GIF
+                      </p>
                     </div>
                   </FileInput>
                   <FileUploaderContent>
@@ -313,6 +362,5 @@ export default function BranchForm() {
         <Button type="submit">Submit</Button>
       </form>
     </Form>
-  )
+  );
 }
-
